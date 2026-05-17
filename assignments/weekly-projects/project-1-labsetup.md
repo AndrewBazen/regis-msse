@@ -11,7 +11,7 @@
 This lab establishes a self-contained penetration testing environment on my local workstation. The full stack is:
 
 | Layer | Component |
-|---|---|---|
+|---|---|
 | Host hardware | Windows 11 PC (x86_64) |
 | Host OS | Windows 11 |
 | Type 2 Hypervisor | Oracle VirtualBox 7.x |
@@ -114,8 +114,6 @@ Screenshot of a successful `ping` from Kali to Metasploitable 2:
 ---
 
 ## 8. Problems Encountered and Resolutions
-
-> *Edit this section to reflect the issues you actually hit. The first three below are the most common; keep the ones that apply, delete the rest, and add your own.*
 
 ### Problem 1: How to download Nessus on a host-only-isolated Kali box
 **Symptom:** With Kali initially configured on Host-Only only, Firefox could not reach `tenable.com` — the lab network has no internet route.
