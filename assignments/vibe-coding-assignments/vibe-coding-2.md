@@ -101,7 +101,7 @@ The agent built the game without placing guides or aids to show the player how t
 
 ### Code Postmortem after solving a room
 
-![Exploit and vulnerability deep-dive after Room](../images/post-mortem.png)
+![Exploit and vulnerability deep-dive after Room](../images/post-mortem-cipherlock.png)
 
 ### End Screen
 
