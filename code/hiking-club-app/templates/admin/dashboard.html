@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — Hiking Club{% endblock %}
+
+{% block content %}
+<h1>Admin Dashboard</h1>
+
+<section class="admin-section">
+    <h2>Create a New Event</h2>
+    <form method="post" action="{{ url_for('admin_create_event') }}" class="form card">
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="date">Date</label>
+        <input type="date" id="date" name="date" required>
+
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location">
+
+        <label for="max_participants">Max participants</label>
+        <input type="number" id="max_participants" name="max_participants" min="1" value="10">
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="3"></textarea>
+
+        <button type="submit" class="button">Create event</button>
+    </form>
+</section>
+
+<section class="admin-section">
+    <h2>All Events ({{ events|length }})</h2>
+    {% if events %}
+    <table class="data-table">
+        <thead>
+            <tr><th>Title</th><th>Date</th><th>Location</th><th>Max</th></tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+            <tr>
+                <td><a href="{{ url_for('event_detail', event_id=event['id']) }}">{{ event['title'] }}</a></td>
+                <td>{{ event['date'] }}</td>
+                <td>{{ event['location'] }}</td>
+                <td>{{ event['max_participants'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No events yet.</p>
+    {% endif %}
+</section>
+
+<section class="admin-section">
+    <h2>Members ({{ members|length }})</h2>
+    <table class="data-table">
+        <thead>
+            <tr><th>Name</th><th>Email</th><th>Role</th><th>Phone</th></tr>
+        </thead>
+        <tbody>
+            {% for member in members %}
+            <tr>
+                <td>{{ member['name'] }}</td>
+                <td>{{ member['email'] }}</td>
+                <td>{{ member['role'] }}</td>
+                <td>{{ member['phone'] or '—' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

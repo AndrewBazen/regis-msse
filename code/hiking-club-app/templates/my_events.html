@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}My Events — Hiking Club{% endblock %}
+
+{% block content %}
+<h1>My Events</h1>
+
+{% if events %}
+<ul class="event-list">
+    {% for event in events %}
+    <li class="event-card">
+        <div class="event-card-main">
+            <h2><a href="{{ url_for('event_detail', event_id=event['id']) }}">{{ event['title'] }}</a></h2>
+            <p class="event-meta">
+                <span class="badge">{{ event['date'] }}</span>
+                <span class="badge">{{ event['location'] }}</span>
+                <span class="badge">{{ event['status'] }}</span>
+            </p>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>You haven't registered for any events yet. <a href="{{ url_for('index') }}">Browse upcoming events</a>.</p>
+{% endif %}
+{% endblock %}

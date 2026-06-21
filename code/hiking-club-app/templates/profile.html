@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}My Profile — Hiking Club{% endblock %}
+
+{% block content %}
+<h1>My Profile</h1>
+<p class="muted">Update your contact details and emergency contact.</p>
+
+<form method="post" class="form card">
+    <label for="name">Full name</label>
+    <input type="text" id="name" name="name" value="{{ current_user['name'] }}" required>
+
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" value="{{ current_user['email'] }}" required>
+
+    <label for="phone">Phone</label>
+    <input type="text" id="phone" name="phone" value="{{ current_user['phone'] or '' }}">
+
+    <label for="emergency_contact">Emergency contact</label>
+    <input type="text" id="emergency_contact" name="emergency_contact"
+           value="{{ current_user['emergency_contact'] or '' }}">
+
+    <button type="submit" class="button">Save changes</button>
+</form>
+{% endblock %}
