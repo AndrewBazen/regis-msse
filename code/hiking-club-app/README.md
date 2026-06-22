@@ -120,6 +120,99 @@ To override the Flask session secret, set the `SECRET_KEY` environment variable
 
 ---
 
+## Penetration testing from Kali (DirBuster + OWASP ZAP)
+
+These steps assume the app is running on the target VM at
+**`http://10.10.10.6:5000`** and your Kali VM is on the same `10.10.10.0/24`
+host-only network. Adjust the IP if yours differs. Confirm reachability first:
+
+```bash
+curl http://10.10.10.6:5000/
+```
+
+Seeded accounts for authenticated testing:
+
+| Role   | Email                   | Password        |
+|--------|-------------------------|-----------------|
+| Admin  | `admin@hikingclub.test` | `AdminPass123`  |
+| Member | `alice@example.com`     | `MemberPass123` |
+
+> Run the tools **one at a time**. The Flask development server is a single
+> process, so DirBuster and a ZAP active scan hammering it at once will slow it
+> down and skew results.
+
+### 1. Content discovery with DirBuster
+
+DirBuster brute-forces paths to reveal routes that aren't linked in the UI.
+
+1. Launch it: `dirbuster` (or **Applications → Web Application Analysis → dirbuster**).
+2. **Target URL:** `http://10.10.10.6:5000`
+3. **Work Method:** *GET requests only*.
+4. **Number of Threads:** 10–20 (don't overwhelm the single-process server).
+5. **File with list of dirs/files:** browse to
+   `/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt`
+   (use the `...small...` list for a quick first pass). If it's not there, check
+   `/usr/share/dirbuster/wordlists/`.
+6. **File extension:** leave blank (this is a route-based Flask app — paths like
+   `/admin` have no file extension).
+7. **Dir to start with:** `/` → click **Start**.
+
+Watch the **Results – Tree/List View**. The HTTP status codes tell the story:
+
+| Path | Code | Meaning |
+|------|------|---------|
+| `/`, `/login`, `/register` | 200 | public pages |
+| `/admin`, `/profile`, `/my-events` | 302 | route exists but redirects guests to login (auth is working) |
+| `/static/...` | 200 | static assets (CSS) |
+| random words | 404 | no such route |
+
+The **302s are the key finding** — they prove protected routes exist. Browse to
+them directly in a browser to confirm you're bounced to `/login`.
+
+> CLI alternative (usually faster) if you prefer it:
+> ```bash
+> gobuster dir -u http://10.10.10.6:5000 \
+>   -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+> ```
+
+### 2. Scanning with OWASP ZAP
+
+#### a) Unauthenticated automated scan
+1. Launch ZAP: `zaproxy`.
+2. **Quick Start → Automated Scan**.
+3. URL to attack: `http://10.10.10.6:5000` → **Attack**.
+4. Review results under the **Alerts** tab; export with **Report → Generate Report**.
+
+#### b) Authenticated scan (covers profile / my-events / admin)
+To let ZAP reach logged-in pages, configure form-based authentication:
+
+1. In the **Sites** tree, right-click the target → **Include in Context → New Context**.
+2. In the Context editor → **Authentication**:
+   - Method: **Form-based Authentication**
+   - Login Form Target URL: `http://10.10.10.6:5000/login`
+   - Login Request POST Data: `email={%username%}&password={%password%}`
+   - Username Parameter: `email` • Password Parameter: `password`
+3. **Session Management:** Cookie-based (default).
+4. Set indicators so ZAP can tell session state:
+   - **Logged-in indicator (regex):** `Log out`
+   - **Logged-out indicator (regex):** `Log in`
+5. Context → **Users**: add a user with the **member** creds, and a second with
+   the **admin** creds.
+6. Right-click the target → **Attack → Spider** (pick your user), then
+   **Attack → Active Scan** as the same user.
+7. Run it once as the member and once as the admin to exercise both roles.
+
+#### What to expect in the results
+- **Absence of Anti-CSRF Tokens** — the app's POST forms have no CSRF tokens, so
+  ZAP will flag this. It's a legitimate finding for your report.
+- **Missing security headers** (Content-Security-Policy, etc.) on the dev server —
+  also expected.
+- **SQL injection / reflected XSS should NOT fire** — queries are parameterized and
+  Jinja2 auto-escapes output. Note the *absence* of these as a positive result and
+  cross-reference it to the injection risks in the Project 2 threat model.
+
+---
+
 ## Notes on this build vs. the design document
 
 The Project 2 architecture diagram shows a 3-tier cloud topology — public
