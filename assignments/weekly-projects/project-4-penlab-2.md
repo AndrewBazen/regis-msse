@@ -100,8 +100,8 @@ real security posture of a from-scratch build.
 We exercised every route and confirmed server-side authorization behaves as
 designed: protected routes redirect guests to the login page (HTTP 302), a logged-in
 **member** is forbidden (HTTP 403) from the admin dashboard, and the **admin**
-reaches it (HTTP 200). The screenshots below show the application running, viewed
-from the Kali browser against the deployed instance at `http://10.10.10.6:5000`.
+reaches it (HTTP 200). The screenshots below show the application running **locally**
+at `http://localhost:5000` (the same build later deployed to the lab VM in Part 3).
 
 **Screen Shot 1 — Public home page (upcoming events)**
 
@@ -115,7 +115,7 @@ from the Kali browser against the deployed instance at `http://10.10.10.6:5000`.
 ![Screen Shot 2: Login page](../images/project-4-app-login.png)
 
 > Shows the `/login` form (email + password). The browser address bar confirms the
-> app is being reached at `http://10.10.10.6:5000/login`.
+> app is running locally at `http://localhost:5000/login`.
 
 **Screen Shot 3 — Admin dashboard (logged in as admin)**
 
