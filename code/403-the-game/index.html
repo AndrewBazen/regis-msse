@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>403: The Game — Broken Access Control</title>
+  <meta name="description" content="An educational puzzle game teaching OWASP A01: Broken Access Control. 8 self-contained access-control puzzles." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%F0%9F%9A%AB</text></svg>" />
+</head>
+<body>
+
+  <!-- ============================== TOP BAR ============================== -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">403<b>:</b> The Game</span>
+      <span class="tagline">OWASP A01 — Broken Access Control</span>
+    </div>
+    <div class="progress-wrap">
+      <div id="progress" aria-label="Level progress"></div>
+      <button id="how-to-play" class="btn-ghost" title="How to play">？ How to play</button>
+      <button id="reset-all" class="btn-ghost" title="Reset all progress">Reset all</button>
+    </div>
+  </header>
+
+  <!-- =========================== LEVEL BANNER ============================ -->
+  <div class="level-banner">
+    <span class="counter" id="level-counter">Level 1 / 8</span>
+    <h1 id="level-title">—</h1>
+    <span class="tag" id="level-tag">—</span>
+    <button id="briefing-btn" class="btn-ghost banner-brief" title="Show this level's concept briefing">📖 Briefing</button>
+  </div>
+
+  <!-- =============================== STAGE =============================== -->
+  <main class="stage">
+
+    <!-- The App -->
+    <section class="panel" id="panel-app">
+      <div class="panel-title app"><span class="dot"></span> The App</div>
+      <div class="browser">
+        <div class="browser-chrome">
+          <span class="traffic"><i></i><i></i><i></i></span>
+          <div class="urlbar">
+            <span class="method-pill m-GET" id="browser-method">GET</span>
+            <span id="browser-url">—</span>
+          </div>
+          <span class="browser-status" id="browser-status" hidden></span>
+        </div>
+        <div class="viewport"><div id="app-body"></div></div>
+      </div>
+    </section>
+
+    <!-- The Inspector -->
+    <section class="panel" id="panel-inspector">
+      <div class="panel-title inspector"><span class="dot"></span> The Inspector</div>
+      <div class="inspector-help">Edit <b>one thing</b>, then hit <b>Send Request</b>. The pane that matters for this level is expanded for you.</div>
+      <div id="inspector-panes"></div>
+    </section>
+
+    <!-- The Goal Card -->
+    <section class="panel" id="panel-goal">
+      <div class="panel-title goal"><span class="dot"></span> The Goal Card</div>
+      <div class="goal-body">
+        <div class="goal-row">
+          <div class="goal-k">Who you are</div>
+          <div class="goal-v" id="goal-persona">—</div>
+        </div>
+        <div class="goal-row">
+          <div class="goal-k">Your objective</div>
+          <div class="goal-v" id="goal-objective">—</div>
+        </div>
+        <div class="hint">
+          <button id="hint-toggle" aria-expanded="false">💡 Stuck? Show a hint</button>
+          <div id="hint-body" hidden></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- result banner (diagnostic message) -->
+  <div class="result" id="result" hidden></div>
+
+  <!-- ============================== ACTIONS ============================= -->
+  <div class="actions">
+    <button class="btn btn-primary" id="send">▶ Send Request</button>
+    <button class="btn btn-secondary" id="reset">↺ Reset level</button>
+    <button class="btn btn-secondary" id="prev">‹ Prev</button>
+    <button class="btn btn-secondary" id="next-nav">Next ›</button>
+    <span class="kbd-hint"><span class="kbd">Ctrl</span>+<span class="kbd">Enter</span> to send</span>
+  </div>
+
+  <footer class="foot">
+    These vulnerabilities are <b>intentional teaching features</b> — every broken route is marked <code>// INTENTIONAL VULNERABILITY</code>. Do not deploy this code.
+  </footer>
+
+  <!-- ============================ POSTMORTEM ============================ -->
+  <div class="modal" id="modal-postmortem" hidden>
+    <div class="modal-card">
+      <div class="modal-head">
+        <span class="pm-eyebrow">Postmortem</span>
+        <h2 id="pm-level">—</h2>
+        <button class="modal-x" data-close="#modal-postmortem" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="pm-summary" id="pm-summary">—</p>
+        <div class="code-compare">
+          <div class="code-col vuln">
+            <h3><span class="tagdot"></span> Vulnerable backend</h3>
+            <pre><code id="pm-vuln-code"></code></pre>
+          </div>
+          <div class="code-col secure">
+            <h3><span class="tagdot"></span> Secure backend</h3>
+            <pre><code id="pm-secure-code"></code></pre>
+          </div>
+        </div>
+        <div class="pm-lessons">
+          <h3>How to prevent it</h3>
+          <ul id="pm-lessons"></ul>
+        </div>
+        <div class="modal-foot">
+          <button class="btn btn-secondary" data-close="#modal-postmortem">Stay here</button>
+          <button class="btn btn-primary" id="pm-next">Next level →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ TUTORIAL ============================ -->
+  <div class="modal" id="modal-tutorial" hidden>
+    <div class="modal-card">
+      <div class="modal-head">
+        <span class="pm-eyebrow">Welcome</span>
+        <h2>How to play 403: The Game</h2>
+        <button class="modal-x" data-close="#modal-tutorial" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <p class="tut-intro">Each level is a small web app with a <b>Broken Access Control</b> flaw. Your job: exploit it to reach something you shouldn't &mdash; then read the postmortem to learn the fix.</p>
+        <div class="tut-grid">
+          <div class="tut-card"><span class="tut-n app">The App</span><p>A fake web page shown in a browser frame. This is your target.</p></div>
+          <div class="tut-card"><span class="tut-n insp">The Inspector</span><p>The live request &mdash; URL, method, cookies, decoded JWT, and body &mdash; all editable. The pane that matters this level is opened for you.</p></div>
+          <div class="tut-card"><span class="tut-n goal">The Goal Card</span><p>Who you are and what to access this level, plus a hint if you get stuck.</p></div>
+        </div>
+        <ol class="tut-steps">
+          <li>Read the level <b>briefing</b> (the concept) and the <b>Goal Card</b> (your target).</li>
+          <li>Change <b>one thing</b> in the Inspector.</li>
+          <li>Hit <b>▶ Send Request</b> (or <span class="kbd">Ctrl</span>+<span class="kbd">Enter</span>).</li>
+          <li>Wrong attempts explain <i>why</i> they failed &mdash; adjust and try again.</li>
+          <li>On success, a <b>Postmortem</b> shows the vulnerable vs. secure code. Then advance.</li>
+        </ol>
+        <p class="muted small">Reopen this anytime with <b>？ How to play</b> (top bar), or a level's concept with <b>📖 Briefing</b>.</p>
+        <div class="modal-foot">
+          <button class="btn btn-primary" id="tutorial-start">Got it →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================= LEVEL BRIEFING ========================= -->
+  <div class="modal" id="modal-brief" hidden>
+    <div class="modal-card">
+      <div class="modal-head">
+        <span class="pm-eyebrow" id="brief-eyebrow">Briefing</span>
+        <h2 id="brief-title">—</h2>
+        <button class="modal-x" data-close="#modal-brief" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <div id="brief-body" class="brief-body"></div>
+        <div class="modal-foot">
+          <button class="btn btn-secondary" id="brief-howto">？ How to play</button>
+          <button class="btn btn-primary" id="brief-start">Start level →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================== WIN =============================== -->
+  <div class="modal" id="modal-win" hidden>
+    <div class="modal-card">
+      <div class="modal-body win-card">
+        <div class="trophy">🏆</div>
+        <h2>You broke all 8.</h2>
+        <p class="win-sub">You've now exploited every major flavor of <b>OWASP A01: Broken Access Control</b> — and seen the fix for each.</p>
+        <div class="win-list">
+          <div class="win-li"><span class="n">1</span><span class="t">Sequential IDOR</span><span class="d">enforce ownership server-side</span></div>
+          <div class="win-li"><span class="n">2</span><span class="t">Forced browsing</span><span class="d">deny-by-default on every route</span></div>
+          <div class="win-li"><span class="n">3</span><span class="t">Cookie tampering</span><span class="d">never trust client-held roles</span></div>
+          <div class="win-li"><span class="n">4</span><span class="t">GraphQL vertical IDOR</span><span class="d">authorize per resolver/object</span></div>
+          <div class="win-li"><span class="n">5</span><span class="t">HTTP verb swap</span><span class="d">consistent checks across methods</span></div>
+          <div class="win-li"><span class="n">6</span><span class="t">Mass assignment</span><span class="d">allow-list editable fields</span></div>
+          <div class="win-li"><span class="n">7</span><span class="t">JWT alg:none</span><span class="d">pin the algorithm, reject none</span></div>
+          <div class="win-li"><span class="n">8</span><span class="t">Path traversal</span><span class="d">canonicalize &amp; confine paths</span></div>
+        </div>
+        <div class="modal-foot" style="justify-content:center">
+          <button class="btn btn-primary" id="win-restart">Play again</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="levels.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
