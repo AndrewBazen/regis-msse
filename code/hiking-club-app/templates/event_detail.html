@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ event['title'] }} — Hiking Club{% endblock %}
+
+{% block content %}
+<p><a href="{{ url_for('index') }}">&larr; Back to events</a></p>
+
+<article class="card">
+    <h1>{{ event['title'] }}</h1>
+    <p class="event-meta">
+        <span class="badge">{{ event['date'] }}</span>
+        <span class="badge">{{ event['location'] }}</span>
+        {% if spots > 0 %}
+            <span class="badge spots">{{ spots }} spot{{ '' if spots == 1 else 's' }} left</span>
+        {% else %}
+            <span class="badge spots full">Full</span>
+        {% endif %}
+    </p>
+
+    <p>{{ event['description'] }}</p>
+
+    {% if current_user %}
+        {% if already_registered %}
+            <p class="notice">You are registered for this event.</p>
+        {% elif spots > 0 %}
+            <form method="post" action="{{ url_for('register_for_event', event_id=event['id']) }}">
+                <button type="submit" class="button">Register for this event</button>
+            </form>
+        {% else %}
+            <p class="notice">This event is full.</p>
+        {% endif %}
+    {% else %}
+        <p class="notice">
+            <a href="{{ url_for('login') }}">Log in</a> to register for this event.
+        </p>
+    {% endif %}
+</article>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Upcoming Events — Hiking Club{% endblock %}
+
+{% block content %}
+<h1>Upcoming Events</h1>
+<p class="muted">Browse upcoming hikes. Log in as a member to register for an event.</p>
+
+{% if events %}
+<ul class="event-list">
+    {% for event in events %}
+    <li class="event-card">
+        <div class="event-card-main">
+            <h2><a href="{{ url_for('event_detail', event_id=event['id']) }}">{{ event['title'] }}</a></h2>
+            <p class="event-meta">
+                <span class="badge">{{ event['date'] }}</span>
+                <span class="badge">{{ event['location'] }}</span>
+            </p>
+            <p>{{ event['description'] }}</p>
+        </div>
+        <div class="event-card-side">
+            {% if event['spots_remaining'] > 0 %}
+                <span class="spots">{{ event['spots_remaining'] }} spot{{ '' if event['spots_remaining'] == 1 else 's' }} left</span>
+            {% else %}
+                <span class="spots full">Full</span>
+            {% endif %}
+            <a class="button" href="{{ url_for('event_detail', event_id=event['id']) }}">Details</a>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>There are no upcoming events right now. Check back soon!</p>
+{% endif %}
+{% endblock %}
