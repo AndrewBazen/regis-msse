@@ -2,7 +2,7 @@
 
 **Course:** MSSE 642
 **Application:** Hiking Club Application
-**Group members:** Andrew Bazen, Depen Tamang, Anusha Reddy
+**Active Group members:** Andrew Bazen, Anusha Reddy
 
 ### References
 
@@ -27,7 +27,63 @@ pen-testing lab, and tests it with OWASP ZAP.
 
 ## Part 1 — Web Application Penetration Testing Procedure
 
-_(Teammate to complete.)_
+### Summary Table
+
+The table below summarizes the two phases of web penetration testing covered in
+Chapters 14 and 15 of *Learn Kali Linux 2019*, along with the tool selected for each
+phase.
+
+| Phase | Description | Tool selected |
+|-------|-------------|---------------|
+| Website Penetration Testing: Information Gathering (Ch. 14) | This phase focuses on discovering the structure, directories, files, and hidden components of a web application before attempting exploitation. The goal is to map the application's attack surface by identifying endpoints, technologies, and potential weak points. Information gathering is passive or low-impact and sets the foundation for deeper testing. | Gobuster |
+| Website Penetration Testing: Gaining Access (Ch. 15) | This phase involves actively exploiting vulnerabilities identified during information gathering. The tester attempts to bypass authentication, manipulate inputs, exploit misconfigurations, or trigger known vulnerabilities to gain unauthorized access. This is the offensive phase where exploitation tools and intercepting proxies are used. | OWASP ZAP |
+
+### Tool Description and Analysis
+
+#### Gobuster
+
+**Vendor website:** <https://www.kali.org/tools/gobuster/>
+
+**Description.** Gobuster is a fast and lightweight command-line tool used for
+brute-forcing directories, files, DNS subdomains, and virtual hosts on web servers.
+It uses wordlists to enumerate hidden paths and resources that are not publicly
+linked or visible through normal browsing. Because it is written in Go, Gobuster is
+extremely fast and efficient, making it ideal for large-scale or time-sensitive
+reconnaissance.
+
+**Included in Kali Linux 2019?** Yes — Gobuster is included by default in Kali Linux
+(including the 2019 release).
+
+**How it would be used to test the Hiking Club Application.** For the Hiking Club
+Application, Gobuster would be used during the information-gathering phase to
+enumerate hidden directories such as `/admin`, `/backup`, `/private`, or `/test`.
+These locations may contain sensitive configuration files, outdated code, or
+administrative panels that are not intended for public access. Discovering these
+hidden paths helps identify potential attack vectors that could later be exploited
+during the gaining-access phase, such as exposed login pages, forgotten development
+endpoints, or misconfigured directories that leak sensitive information.
+
+#### OWASP ZAP (Zed Attack Proxy)
+
+**Vendor website:** <https://www.zaproxy.org/>
+
+**Description.** OWASP ZAP is an open-source web application security scanner used to
+identify vulnerabilities in web applications. It functions as an intercepting proxy,
+allowing testers to capture, modify, and replay HTTP requests to analyze how the
+application handles user input. ZAP also includes automated scanning capabilities
+that detect common vulnerabilities such as SQL injection, cross-site scripting (XSS),
+authentication flaws, and insecure configurations.
+
+**Included in Kali Linux 2019?** Yes — OWASP ZAP is included by default in Kali Linux.
+
+**How it would be used to test the Hiking Club Application.** For the Hiking Club
+Application, OWASP ZAP would be used during the gaining-access phase to actively test
+for vulnerabilities. By intercepting and modifying requests, ZAP allows testers to
+probe for weaknesses in authentication, session management, and input validation.
+Automated scans can identify issues such as SQL injection, XSS, insecure cookies, and
+weak session tokens. This helps determine whether an attacker could gain unauthorized
+access to user accounts, manipulate hiking event data, or compromise sensitive
+information stored by the application.
 
 ---
 
