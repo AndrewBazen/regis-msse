@@ -11,6 +11,7 @@ Hands-on weekly projects.
 - [`project-1-labsetup.md`](assignments/weekly-projects/project-1-labsetup.md) — Penetration testing lab setup on Windows 11 using VirtualBox, Kali Linux (attacker), and Metasploitable 2 (target) on an isolated host-only network.
 - [`project-2-threat-model.md`](assignments/weekly-projects/project-2-threat-model.md) — Secure SDLC and threat model for a Hiking Club web application. Group project with Depen Tamang and Anusha Reddy.
 - [`project-3-pentesting1.md`](assignments/weekly-projects/project-3-pentesting1.md) — Penetration testing walkthrough using the Metasploit Framework and Nessus against Metasploitable 2, with findings and suggested remediations.
+- [`project-4-penlab-2.md`](assignments/weekly-projects/project-4-penlab-2.md) — Web-application penetration test (Part 2) of the Hiking Club app: a from-scratch Flask + SQLite rebuild coded with an agentic tool, deployed to an isolated lab VM, and tested with gobuster (content discovery) and OWASP ZAP (active scanning). Group project with Anusha Reddy. Source lives in [`code/hiking-club-app/`](code/hiking-club-app/).
 
 ### `assignments/vibe-coding-assignments/`
 
@@ -29,6 +30,7 @@ Screenshots and diagrams referenced by the project write-ups.
 Source code for assignments that ship runnable artifacts.
 
 - [`code/403-the-game/`](code/403-the-game/) — *403: The Game* (Vibe Coding 3). A dependency-free static site (vanilla HTML/CSS/JS); open `index.html` in a browser to play.
+- [`code/hiking-club-app/`](code/hiking-club-app/) — Hiking Club Application (Project 4). A Flask + SQLite web app with guest/member/admin roles; the deployable, scan-target build used for the Project 4 penetration test. See its [README](code/hiking-club-app/README.md) to run it locally, with Docker, or on a lab VM.
 
 ### `assignments/research-presentation/`
 
@@ -44,7 +46,8 @@ regis-msse/
 │   ├── research-presentation/
 │   └── images/                  # Screenshots for the write-ups
 └── code/
-    └── 403-the-game/            # Vibe Coding 3 — playable static site
+    ├── 403-the-game/            # Vibe Coding 3 — playable static site
+    └── hiking-club-app/         # Project 4 — Flask + SQLite pen-test target
 ```
 
 ## Author
