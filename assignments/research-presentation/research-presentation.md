@@ -23,7 +23,7 @@ And adoption is real, not hypothetical:
 
 ## Slide 2 — Reality Check: Productivity Is Messy
 
-![Productivity claims chart](images/productivity-claims.png)
+![Productivity claims chart](../images/productivity-claims.png)
 
 The same question — *"does AI make developers faster?"* — gets wildly different answers:
 
@@ -56,7 +56,7 @@ AI assistants reliably struggle with:
 
 ## Slide 4 — The Job Market: Splitting, Not Collapsing
 
-![Job market chart](images/job-market-split.png)
+![Job market chart](../images/job-market-split.png)
 
 The labor data shows a **restructuring**, not a wipeout:
 
